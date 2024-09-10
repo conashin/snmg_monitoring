@@ -6,19 +6,19 @@ This container is for docker based PortainerBE. The services contain Prometheus,
 
 Ubuntu
 
-+-----Portainer(Docker management)
+├── Portainer(Docker management)
 
-+-----Docker
+└── Docker
 
-+-----+-----Db
+    ├── Db
 
-+-----+-----Prometheus
+    ├── Prometheus
 
-+-----+-----Grafana
+    ├── Grafana
 
-+-----+-----LibreNMS
+    ├── LibreNMS
 
-+-----+-----n8n
+    └──n8n
 
 # Explanations
 
@@ -45,4 +45,4 @@ Ubuntu
 2. development IP allocated at LAN for 10.213.30.20, VLAN ID is 30
 3. Installed Docker, PortainerBE
 4. Created docker network with "front-tier" for web UI, and "back-tier" for container's communication
-
+5. Create the basic file structure.
