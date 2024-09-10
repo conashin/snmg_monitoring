@@ -38,3 +38,11 @@ Ubuntu
 1. Start of developing
 2. Creation of LXC container on PVE4
 3. Waiting for LAN static IP allocation
+
+## 2024-09-10
+
+1. Rebuild on PVE1 in ID 107
+2. development IP allocated at LAN for 10.213.30.20, VLAN ID is 30
+3. Installed Docker, PortainerBE
+4. Created docker network with "front-tier" for web UI, and "back-tier" for container's communication
+
