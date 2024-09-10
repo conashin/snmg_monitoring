@@ -10,15 +10,15 @@ Ubuntu
 
 └── Docker
 
-​    ├── Db
+​	├── Db
 
-​    ├── Prometheus
+​	├── Prometheus
 
-​    ├── Grafana
+​	├── Grafana
 
-​    ├── LibreNMS
+​	├── LibreNMS
 
-​    └── n8n
+​	└── n8n
 
 # Explanations
 
@@ -46,3 +46,18 @@ Ubuntu
 3. Installed Docker, PortainerBE
 4. Created docker network with "front-tier" for web UI, and "back-tier" for container's communication
 5. Create the basic file structure.
+
+```
+snmg_monitoring/
+├── alertmgr/
+│   └── config.yml
+├── grafana/
+│   └── config.monitoring
+├── libreNMS/
+│   └── libreNMS.env
+└── prometheus/
+    ├── alert.yml
+    └── prometheus.yml
+├── docker-compose-dev.yml
+└── README.md
+```
