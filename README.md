@@ -5,13 +5,20 @@ This container is for docker based PortainerBE. The services contain Prometheus,
 # Arch
 
 Ubuntu
+
 ├── Portainer(Docker management)
+
 └── Docker
-    ├── Db
-    ├── Prometheus
-    ├── Grafana
-    ├── LibreNMS
-    └──n8n
+
+​    ├── Db
+
+​    ├── Prometheus
+
+​    ├── Grafana
+
+​    ├── LibreNMS
+
+​    └── n8n
 
 # Explanations
 
