@@ -5,13 +5,14 @@ volumes:
     grafana_data: {}
     db: {}
     libreNMS-data: {}
+    traefik_data: {}
+    n8n_data: {}
 
 networks:
   front-tier:
   back-tier:
 
 services:
-
   prometheus:
     image: prom/prometheus:v2.36.2
     volumes:
@@ -34,10 +35,6 @@ services:
     networks:
       - back-tier
     restart: always
-#    deploy:
-#      placement:
-#        constraints:
-#          - node.hostname == ${HOSTNAME}
 
   node-exporter:
     image: quay.io/prometheus/node-exporter:latest
@@ -76,6 +73,7 @@ services:
 #      placement:
 #        constraints:
 #          - node.hostname == ${HOSTNAME}
+
   cadvisor:
     image: gcr.io/cadvisor/cadvisor
     volumes:
@@ -288,3 +286,27 @@ services:
       - "DB_TIMEOUT=60"
       - "SIDECAR_SNMPTRAPD=1"
     restart: always
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    networks:
+      - back-tier
+      - front-tier
+    environment:
+      - N8N_HOST=${n8n_HOST}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - NODE_ENV=production
+      - WEBHOOK_URL=${n8n_WEBHOOK_URL}
+      - GENERIC_TIMEZONE=${TZ}
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  traefik_data:
+    external: true
+  n8n_data:
+    external: true
