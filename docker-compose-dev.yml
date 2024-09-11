@@ -5,7 +5,6 @@ volumes:
     grafana_data: {}
     libreNMS-db: {}
     libreNMS-data: {}
-    traefik_data: {}
     n8n_data: {}
 
 networks:
@@ -228,9 +227,3 @@ services:
       - GENERIC_TIMEZONE=${TZ}
     volumes:
       - n8n_data:/home/node/.n8n
-
-volumes:
-  traefik_data:
-    external: true
-  n8n_data:
-    external: true
