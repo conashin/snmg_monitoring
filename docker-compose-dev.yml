@@ -98,7 +98,7 @@ services:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning/:/etc/grafana/provisioning/
     env_file:
-      - ./stack.env
+      - stack.env
     networks:
       - back-tier
       - front-tier
@@ -128,7 +128,7 @@ services:
     networks:
       - back-tier
     env_file:
-      - ./stack.env
+      - stack.env
     environment:
       - "TZ=${TZ}"
       - "MARIADB_RANDOM_ROOT_PASSWORD=yes"
@@ -165,7 +165,7 @@ services:
     volumes:
       - "libreNMS-data:/data"
     env_file:
-      - "./stack.env"
+      - "stack.env"
     environment:
       - "TZ=${TZ}"
       - "PUID=${PUID}"
@@ -190,7 +190,7 @@ services:
     volumes:
       - "./librenms:/data"
     env_file:
-      - "./stack.env"
+      - "stack.env"
     networks:
       - back-tier
     environment:
@@ -215,7 +215,7 @@ services:
       - back-tier
       - front-tier
     env_file:
-      - "./stack.env"
+      - "stack.env"
     environment:
       - N8N_HOST=${n8n_HOST}
       - N8N_PORT=${n8n_PORT}
