@@ -3,7 +3,7 @@ version: '3.7'
 volumes:
     prometheus_data: {}
     grafana_data: {}
-    db: {}
+    libreNMS-db: {}
     libreNMS-data: {}
     traefik_data: {}
     n8n_data: {}
@@ -13,7 +13,7 @@ networks:
   back-tier:
 
 services:
-  prometheus:
+  prometheus: #prometheus main service
     image: prom/prometheus:v2.36.2
     volumes:
       - ./prometheus/:/etc/prometheus/
@@ -36,7 +36,7 @@ services:
       - back-tier
     restart: always
 
-  node-exporter:
+  node-exporter: #node-exporter: local system analysis
     image: quay.io/prometheus/node-exporter:latest
     volumes:
       - /proc:/host/proc:ro
@@ -57,7 +57,7 @@ services:
     deploy:
       mode: global
 
-  alertmanager:
+  alertmanager: # part of prometheus
     image: prom/alertmanager
     ports:
       - 9093:9093
@@ -74,7 +74,7 @@ services:
 #        constraints:
 #          - node.hostname == ${HOSTNAME}
 
-  cadvisor:
+  cadvisor: #local system analysis
     image: gcr.io/cadvisor/cadvisor
     volumes:
       - /:/rootfs:ro
@@ -89,7 +89,7 @@ services:
     deploy:
       mode: global
 
-  grafana:
+  grafana: #grafana service
     image: grafana/grafana
     user: "472"
     depends_on:
@@ -100,7 +100,7 @@ services:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning/:/etc/grafana/provisioning/
     env_file:
-      - ./grafana/config.monitoring
+      - ./stack.env
     networks:
       - back-tier
       - front-tier
@@ -116,7 +116,7 @@ services:
 #    networks:
 #      - back-tier
 
-  db:
+  librenms-db: 
     image: mariadb:10
     container_name: librenms_db
     command:
@@ -126,9 +126,11 @@ services:
       - "--character-set-server=utf8mb4"
       - "--collation-server=utf8mb4_unicode_ci"
     volumes:
-      - "db:/var/lib/mysql"
+      - "libreNMS-db:/var/lib/mysql"
     networks:
       - back-tier
+    env_file:
+      - ./stack.env
     environment:
       - "TZ=${TZ}"
       - "MARIADB_RANDOM_ROOT_PASSWORD=yes"
@@ -137,22 +139,13 @@ services:
       - "MYSQL_PASSWORD=${MYSQL_PASSWORD}"
     restart: always
 
-  redis:
+  librenms-redis:
     image: redis:7.2-alpine
     container_name: librenms_redis
     networks:
       - back-tier
     environment:
       - "TZ=${TZ}"
-    restart: always
-
-  msmtpd:
-    image: crazymax/msmtpd:latest
-    container_name: librenms_msmtpd
-    env_file:
-      - "./libreNMS/msmtpd.env"
-    networks:
-      - back-tier
     restart: always
 
   librenms:
@@ -175,7 +168,6 @@ services:
     volumes:
       - "libreNMS-data:/data"
     env_file:
-      - "./libreNMS/librenms.env"
       - "./stack.env"
     environment:
       - "TZ=${TZ}"
@@ -188,7 +180,7 @@ services:
       - "DB_TIMEOUT=60"
     restart: always
 
-  dispatcher:
+  librenms-dispatcher:
     image: librenms/librenms:latest
     container_name: librenms_dispatcher
     hostname: librenms-dispatcher
@@ -201,7 +193,7 @@ services:
     volumes:
       - "./librenms:/data"
     env_file:
-      - "./librenms.env"
+      - "./stack.env"
     networks:
       - back-tier
     environment:
@@ -217,76 +209,6 @@ services:
       - "SIDECAR_DISPATCHER=1"
     restart: always
 
-  syslogng:
-    image: librenms/librenms:latest
-    container_name: librenms_syslogng
-    hostname: librenms-syslogng
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
-    depends_on:
-      - librenms
-      - redis
-    ports:
-      - target: 514
-        published: 514
-        protocol: tcp
-      - target: 514
-        published: 514
-        protocol: udp
-    networks:
-      - back-tier
-    volumes:
-      - "./librenms:/data"
-    env_file:
-      - "./librenms.env"
-    environment:
-      - "TZ=${TZ}"
-      - "PUID=${PUID}"
-      - "PGID=${PGID}"
-      - "DB_HOST=db"
-      - "DB_NAME=${MYSQL_DATABASE}"
-      - "DB_USER=${MYSQL_USER}"
-      - "DB_PASSWORD=${MYSQL_PASSWORD}"
-      - "DB_TIMEOUT=60"
-      - "SIDECAR_SYSLOGNG=1"
-    restart: always
-
-  snmptrapd:
-    image: librenms/librenms:latest
-    container_name: librenms_snmptrapd
-    hostname: librenms-snmptrapd
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
-    depends_on:
-      - librenms
-      - redis
-    networks:
-      - back-tier
-    ports:
-      - target: 162
-        published: 162
-        protocol: tcp
-      - target: 162
-        published: 162
-        protocol: udp
-    volumes:
-      - "./librenms:/data"
-    env_file:
-      - "./librenms.env"
-    environment:
-      - "TZ=${TZ}"
-      - "PUID=${PUID}"
-      - "PGID=${PGID}"
-      - "DB_HOST=db"
-      - "DB_NAME=${MYSQL_DATABASE}"
-      - "DB_USER=${MYSQL_USER}"
-      - "DB_PASSWORD=${MYSQL_PASSWORD}"
-      - "DB_TIMEOUT=60"
-      - "SIDECAR_SNMPTRAPD=1"
-    restart: always
-
   n8n:
     image: docker.n8n.io/n8nio/n8n
     restart: always
@@ -295,9 +217,11 @@ services:
     networks:
       - back-tier
       - front-tier
+    env_file:
+      - "./stack.env"
     environment:
       - N8N_HOST=${n8n_HOST}
-      - N8N_PORT=5678
+      - N8N_PORT=${n8n_PORT}
       - N8N_PROTOCOL=https
       - NODE_ENV=production
       - WEBHOOK_URL=${n8n_WEBHOOK_URL}

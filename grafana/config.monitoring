@@ -1,7 +1,0 @@
-GF_SECURITY_ADMIN_PASSWORD=密碼
-GF_USERS_ALLOW_SIGN_UP=false
-GF_SMTP_ENABLED=true
-GF_SMTP_HOST=smtp.gmail.com:587
-GF_SMTP_USER=自己的@gmail.com@gmail.com
-GF_SMTP_PASSWORD=應用程式的密碼，不是你自己的
-GF_SMTP_FROM_ADDRESS=自己的@gmail.com
