@@ -160,9 +160,8 @@ services:
         published: 8000
         protocol: tcp
     depends_on:
-      - db
-      - redis
-      - msmtpd
+      - librenms-db
+      - librenms-redis
     volumes:
       - "libreNMS-data:/data"
     env_file:
@@ -187,7 +186,7 @@ services:
       - NET_RAW
     depends_on:
       - librenms
-      - redis
+      - librenms-redis
     volumes:
       - "./librenms:/data"
     env_file:
