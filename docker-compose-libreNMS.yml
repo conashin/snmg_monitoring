@@ -26,7 +26,7 @@ services:
     networks:
       - innet
     env_file:
-      - "./stack.env"
+      - stack.env
     environment:
       - "TZ=${TZ}"
       - "MARIADB_RANDOM_ROOT_PASSWORD=yes"
@@ -41,7 +41,7 @@ services:
     networks:
       - innet
     env_file:
-      - "./stack.env"
+      - stack.env
     environment:
       - "TZ=${TZ}"
     restart: always
@@ -62,7 +62,7 @@ services:
     volumes:
       - "libreNMS-data:/data"
     env_file:
-      - "./stack.env"
+      - stack.env
     environment:
       - "TZ=${TZ}"
       - "PUID=${PUID}"
@@ -85,7 +85,7 @@ services:
     volumes:
       - "libreNMS-data:/data"
     env_file:
-      - "./stack.env"
+      - stack.env
     networks:
       - innet
       - outnet
