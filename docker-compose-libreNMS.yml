@@ -39,14 +39,14 @@ services:
     container_name: librenms_redis
     networks:
       - innet
+    env_file:
+      - "./stack.env"
     environment:
       - "TZ=${TZ}"
     restart: always
 
   main:
     image: librenms/librenms:latest
-    container_name: librenms
-    hostname: librenms
     networks:
       - innet
       - outnet
@@ -75,8 +75,6 @@ services:
 
   dispatcher:
     image: librenms/librenms:latest
-    container_name: librenms_dispatcher
-    hostname: librenms-dispatcher
     cap_add:
       - NET_ADMIN
       - NET_RAW
@@ -84,9 +82,9 @@ services:
       - main
       - redis
     volumes:
-      - "./librenms:/data"
+      - "libreNMS-data:/data"
     env_file:
-      - "./librenms.env"
+      - "./stack.env"
     networks:
       - innet
       - outnet
