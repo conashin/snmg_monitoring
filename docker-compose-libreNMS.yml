@@ -1,20 +1,18 @@
-version: '3.7'
-
 volumes:
-    prometheus_data: {}
-    grafana_data: {}
-    libreNMS-db: {}
-    libreNMS-data: {}
-    traefik_data: {}
-    n8n_data: {}
+    db_data: {}
+    data: {}
 
 networks:
-  front-tier:
-  back-tier:
-
+  innet:
+    external:
+      name: back-tier
+  outnet:
+    external:
+      name: front-tier
+      
 services:
   db: 
-    image: mariadb:10
+    image: mariadb:lts
     container_name: librenms_db
     command:
       - "mysqld"
@@ -23,9 +21,11 @@ services:
       - "--character-set-server=utf8mb4"
       - "--collation-server=utf8mb4_unicode_ci"
     volumes:
-      - "libreNMS-db:/var/lib/mysql"
+      - "db_data:/var/lib/mysql"
     networks:
-      - back-tier
+      - innet
+    env_file:
+      - "./stack.env"
     environment:
       - "TZ=${TZ}"
       - "MARIADB_RANDOM_ROOT_PASSWORD=yes"
@@ -38,41 +38,29 @@ services:
     image: redis:7.2-alpine
     container_name: librenms_redis
     networks:
-      - back-tier
+      - innet
     environment:
       - "TZ=${TZ}"
     restart: always
 
-  librenms-msmtpd:
-    image: crazymax/msmtpd:latest
-    container_name: librenms_msmtpd
-    env_file:
-      - "./libreNMS/msmtpd.env"
-    networks:
-      - back-tier
-    restart: always
-
-  librenms:
+  main:
     image: librenms/librenms:latest
     container_name: librenms
     hostname: librenms
     networks:
-      - back-tier
+      - innet
+      - outnet
     cap_add:
       - NET_ADMIN
       - NET_RAW
     ports:
-      - target: 8000
-        published: 8000
-        protocol: tcp
+      - 8000:8000
     depends_on:
       - db
       - redis
-      - msmtpd
     volumes:
       - "libreNMS-data:/data"
     env_file:
-      - "./libreNMS/librenms.env"
       - "./stack.env"
     environment:
       - "TZ=${TZ}"
@@ -85,7 +73,7 @@ services:
       - "DB_TIMEOUT=60"
     restart: always
 
-  librenms-dispatcher:
+  dispatcher:
     image: librenms/librenms:latest
     container_name: librenms_dispatcher
     hostname: librenms-dispatcher
@@ -93,14 +81,15 @@ services:
       - NET_ADMIN
       - NET_RAW
     depends_on:
-      - librenms
+      - main
       - redis
     volumes:
       - "./librenms:/data"
     env_file:
       - "./librenms.env"
     networks:
-      - back-tier
+      - innet
+      - outnet
     environment:
       - "TZ=${TZ}"
       - "PUID=${PUID}"
@@ -112,74 +101,4 @@ services:
       - "DB_TIMEOUT=60"
       - "DISPATCHER_NODE_ID=dispatcher1"
       - "SIDECAR_DISPATCHER=1"
-    restart: always
-
-  syslogng:
-    image: librenms/librenms:latest
-    container_name: librenms_syslogng
-    hostname: librenms-syslogng
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
-    depends_on:
-      - librenms
-      - redis
-    ports:
-      - target: 514
-        published: 514
-        protocol: tcp
-      - target: 514
-        published: 514
-        protocol: udp
-    networks:
-      - back-tier
-    volumes:
-      - "./librenms:/data"
-    env_file:
-      - "./librenms.env"
-    environment:
-      - "TZ=${TZ}"
-      - "PUID=${PUID}"
-      - "PGID=${PGID}"
-      - "DB_HOST=db"
-      - "DB_NAME=${MYSQL_DATABASE}"
-      - "DB_USER=${MYSQL_USER}"
-      - "DB_PASSWORD=${MYSQL_PASSWORD}"
-      - "DB_TIMEOUT=60"
-      - "SIDECAR_SYSLOGNG=1"
-    restart: always
-
-  snmptrapd:
-    image: librenms/librenms:latest
-    container_name: librenms_snmptrapd
-    hostname: librenms-snmptrapd
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
-    depends_on:
-      - librenms
-      - redis
-    networks:
-      - back-tier
-    ports:
-      - target: 162
-        published: 162
-        protocol: tcp
-      - target: 162
-        published: 162
-        protocol: udp
-    volumes:
-      - "./librenms:/data"
-    env_file:
-      - "./librenms.env"
-    environment:
-      - "TZ=${TZ}"
-      - "PUID=${PUID}"
-      - "PGID=${PGID}"
-      - "DB_HOST=db"
-      - "DB_NAME=${MYSQL_DATABASE}"
-      - "DB_USER=${MYSQL_USER}"
-      - "DB_PASSWORD=${MYSQL_PASSWORD}"
-      - "DB_TIMEOUT=60"
-      - "SIDECAR_SNMPTRAPD=1"
     restart: always
