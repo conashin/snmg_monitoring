@@ -5,10 +5,10 @@ volumes:
 networks:
   innet:
     external:
-      name: innet
+      name: back-tier
   outnet:
     external:
-      name: outnet
+      name: front-tier
 
 services:
   main: #prometheus main service
@@ -91,7 +91,7 @@ services:
     image: grafana/grafana
     user: "472"
     depends_on:
-      - prometheus
+      - main
     ports:
       - 3000:3000
     volumes:
