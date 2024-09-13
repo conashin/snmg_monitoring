@@ -14,13 +14,6 @@ networks:
 services:
   db: 
     image: mariadb:lts
-    container_name: librenms_db
-    command:
-      - "mysqld"
-      - "--innodb-file-per-table=1"
-      - "--lower-case-table-names=0"
-      - "--character-set-server=utf8mb4"
-      - "--collation-server=utf8mb4_unicode_ci"
     volumes:
       - "db_data:/var/lib/mysql"
     networks:
@@ -37,7 +30,6 @@ services:
 
   redis:
     image: redis:7.2-alpine
-    container_name: librenms_redis
     networks:
       - innet
     env_file:
