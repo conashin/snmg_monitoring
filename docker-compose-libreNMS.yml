@@ -29,7 +29,7 @@ services:
     restart: always
 
   redis:
-    image: redis:7.2-alpine
+    image: redis:alpine
     networks:
       - innet
     env_file:
