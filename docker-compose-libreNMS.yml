@@ -1,6 +1,7 @@
 volumes:
     db_data: {}
     data: {}
+    libreNMS-data: {}
 
 networks:
   innet:
