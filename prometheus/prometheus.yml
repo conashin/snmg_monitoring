@@ -36,7 +36,12 @@ scrape_configs:
     static_configs:
       - targets: ['node_exporter:9100']
 
-  - job_name: 'flask_web'
-    scrape_interval: 3s
+  - job_name: 'relay-2-IMAP'
+    scrape_interval: 60s
     static_configs:
-      - targets: ['web:5000']
+      - targets: ['relay2.ce.ncu.edu.tw:143']
+      
+  - job_name: 'relay-2-POP3'
+    scrape_interval: 60s
+    static_configs:
+      - targets: ['relay2.ce.ncu.edu.tw:110']
