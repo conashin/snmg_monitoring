@@ -21,9 +21,9 @@ services:
     environment:
       - "TZ=${TZ}"
       - "MARIADB_RANDOM_ROOT_PASSWORD=yes"
-      - "MYSQL_DATABASE=${MYSQL_DATABASE}"
-      - "MYSQL_USER=${MYSQL_USER}"
-      - "MYSQL_PASSWORD=${MYSQL_PASSWORD}"
+      - "MYSQL_DATABASE=${DB_DB}"
+      - "MYSQL_USER=${DB_USR}"
+      - "MYSQL_PASSWORD=${DB_PWD}"
     restart: always
 
   redis:
@@ -58,9 +58,9 @@ services:
       - "PUID=${PUID}"
       - "PGID=${PGID}"
       - "DB_HOST=db"
-      - "DB_NAME=${MYSQL_DATABASE}"
-      - "DB_USER=${MYSQL_USER}"
-      - "DB_PASSWORD=${MYSQL_PASSWORD}"
+      - "DB_NAME=${DB_DB}"
+      - "DB_USER=${DB_USR}"
+      - "DB_PASSWORD=${DB_USR}"
       - "DB_TIMEOUT=60"
     restart: always
 
@@ -84,9 +84,9 @@ services:
       - "PUID=${PUID}"
       - "PGID=${PGID}"
       - "DB_HOST=db"
-      - "DB_NAME=${MYSQL_DATABASE}"
-      - "DB_USER=${MYSQL_USER}"
-      - "DB_PASSWORD=${MYSQL_PASSWORD}"
+      - "DB_NAME=${DB_DB}"
+      - "DB_USER=${DB_USR}"
+      - "DB_PASSWORD=${DB_PWD}"
       - "DB_TIMEOUT=60"
       - "DISPATCHER_NODE_ID=dispatcher1"
       - "SIDECAR_DISPATCHER=1"
