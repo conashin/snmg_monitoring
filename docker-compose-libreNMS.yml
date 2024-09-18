@@ -20,7 +20,7 @@ services:
       - innet
     environment:
       - "TZ=${TZ}"
-      - "MARIADB_RANDOM_ROOT_PASSWORD=yes"
+      - "MARIADB_RANDOM_ROOT_PASSWORD=no"
       - "MYSQL_DATABASE=${DB_DB}"
       - "MYSQL_USER=${DB_USR}"
       - "MYSQL_PASSWORD=${DB_PWD}"
