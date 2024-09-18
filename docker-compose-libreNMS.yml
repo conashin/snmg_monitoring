@@ -53,6 +53,7 @@ services:
       - "libreNMS-data:/data"
     env_file:
       - ./libreNMS/librenms.env
+      - ./libreNMS/.env
     environment:
       - "TZ=${TZ}"
       - "PUID=${PUID}"
@@ -76,6 +77,7 @@ services:
       - "libreNMS-data:/data"
     env_file:
       - ./libreNMS/librenms.env
+      - ./libreNMS/.env
     networks:
       - innet
       - outnet
