@@ -45,3 +45,9 @@ scrape_configs:
     scrape_interval: 60s
     static_configs:
       - targets: ['relay2.ce.ncu.edu.tw:110']
+      
+  - job_name: pushgateway
+  scrape_interval: 300s
+  honor_labels: true
+  static_configs:
+      - targets: ['prometheus-pushgateway-1:9091']
